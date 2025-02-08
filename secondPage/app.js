@@ -26,13 +26,15 @@ setInterval(createHeart, 250);
 
 
 
+
 // Получаем все элементы аудиоплееров
 const audioPlayers = document.querySelectorAll('.audio-player');
+let currentlyPlaying = null; // Переменная для отслеживания текущего аудиоплеера
 
 audioPlayers.forEach(player => {
     const audio = player.querySelector('.audio');
-    const playPauseBtn = player.querySelector('.play-btn');  // Изменили на .play-btn
-    const volumeSlider = player.querySelector('.volume-slider');  // Изменили на .volume-slider
+    const playPauseBtn = player.querySelector('.play-btn');
+    const volumeSlider = player.querySelector('.volume-slider');
     const playIcon = playPauseBtn.querySelector('.play-icon');
 
     // Проверка на существование элементов
@@ -44,11 +46,21 @@ audioPlayers.forEach(player => {
     // Обработчик клика по кнопке воспроизведения/паузы
     playPauseBtn.addEventListener('click', () => {
         if (audio.paused) {
+            // Останавливаем текущий играющий плеер, если он есть
+            if (currentlyPlaying && currentlyPlaying !== audio) {
+                currentlyPlaying.pause();
+                currentlyPlaying.closest('.audio-player')
+                    .querySelector('.play-icon').textContent = "▶";
+            }
+
+            // Запускаем текущий
             audio.play();
-            playIcon.textContent = "⏸"; // Меняем на паузу
+            playIcon.textContent = "⏸";
+            currentlyPlaying = audio; // Запоминаем текущий играющий плеер
         } else {
             audio.pause();
-            playIcon.textContent = "▶"; // Меняем на воспроизведение
+            playIcon.textContent = "▶";
+            currentlyPlaying = null;
         }
     });
 
